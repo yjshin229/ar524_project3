@@ -1,9 +1,47 @@
 body {
   margin: 0;
+  overflow: hidden;
 }
 
 #three-canvas {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#header {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  width: calc(100% - 60px); /* Adjust width to consider padding */
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  pointer-events: none; /* Allow clicks to pass through */
+  align-items: center;
+}
+
+.floating-text {
+  font-size: 24px;
+  pointer-events: none;
+  color: white;
+}
+
+.change-text-button {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #793602;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  pointer-events: auto;
+}
+
+.change-text-button:hover {
+  background-color: #b75103;
 }

@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { radToDeg } from "three/src/math/MathUtils";
 import { preloadModels } from "./models";
 
 export default function example() {
@@ -40,7 +39,7 @@ export default function example() {
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
-  // gltf loader
+  // GLTF loader
 
   const modelUrls = [
     "./models/bitten_pizza.glb",
@@ -82,7 +81,8 @@ export default function example() {
       scene.add(randomModel);
     }
   };
-  // 그리기
+
+  // Draw function
   const clock = new THREE.Clock();
 
   function draw() {
@@ -99,7 +99,7 @@ export default function example() {
     renderer.render(scene, camera);
   }
 
-  // 이벤트
+  // Event listener
   window.addEventListener("resize", setSize);
 
   draw();
