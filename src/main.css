@@ -45,3 +45,23 @@ body {
 .change-text-button:hover {
   background-color: #b75103;
 }
+
+.add-button {
+  z-index: 10;
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #021079;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  pointer-events: auto;
+}
+
+.add-button:hover {
+  background-color: #0366b7;
+}

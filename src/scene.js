@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { preloadModels } from "./models";
 
-export default function example() {
+export default function scene(modelsArr) {
   // Renderer
   const canvas = document.querySelector("#three-canvas");
   const renderer = new THREE.WebGLRenderer({
@@ -15,6 +15,7 @@ export default function example() {
 
   // Scene
   const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x808080);
 
   // Camera
   const camera = new THREE.PerspectiveCamera(
@@ -39,45 +40,26 @@ export default function example() {
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
-  // GLTF loader
+  const changeTextButton = document.getElementById("add-button");
+  let index = 10;
+  changeTextButton.addEventListener("click", () => {
+    if (modelsArr.length > 0) {
+      const model = modelsArr[index].clone();
+      model.position.x = Math.random() * 5 - 2.5;
+      model.position.y = Math.random() * 5 - 2.5;
+      scene.add(model);
+      console.log(index);
+      index += 1;
+    }
+  });
 
-  const modelUrls = [
-    "./models/bitten_pizza.glb",
-    "./models/cardboard_box.glb",
-    "./models/food_can_post-war.glb",
-    "./models/orange_fruit.glb",
-    "./models/rotten_apple.glb",
-    "./models/plastic_chair_1.glb",
-    "./models/plastic_chair.glb",
-    "./models/plastic_jerrycan.glb",
-    "./models/plastic_water_bottle.glb",
-    "./models/rotten_avocado.glb",
-    "./models/rotten_dirty_organic_waste.glb",
-    "./models/rotten_pumpkin.glb",
-    "./models/tire.glb",
-    "./models/trash_bag.glb",
-  ];
+  console.log(modelsArr);
 
-  // Array to store preloaded models
-  let modelsArr = [];
-
-  // Preload all models
-  preloadModels(modelUrls)
-    .then((models) => {
-      modelsArr = models;
-
-      // Add random models to the scene
-      addRandomModelToScene();
-    })
-    .catch((error) => {
-      console.error("Error loading models:", error);
-    });
-
-  // Function to add a random model to the scene
   const addRandomModelToScene = () => {
     if (modelsArr.length > 0) {
       const randomIndex = Math.floor(Math.random() * modelsArr.length);
       const randomModel = modelsArr[randomIndex].clone(); // Clone the model to avoid modifying the original
+      console.log(randomModel);
       scene.add(randomModel);
     }
   };
