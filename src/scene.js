@@ -1,21 +1,26 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { preloadModels } from "./models";
+import { degToRad } from "three/src/math/MathUtils";
+import * as CANNON from "cannon-es";
+import { defaultContactMaterial, defaultMaterial } from "./cannon";
+import { createSimpleShape } from "./convexHull";
+import { cm1, cm2 } from "./common";
+import { Floor } from "./floor";
 
-export default function scene(modelsArr) {
+export default function scene(garbageMeshes) {
   // Renderer
-  const canvas = document.querySelector("#three-canvas");
   const renderer = new THREE.WebGLRenderer({
-    canvas,
+    canvas: cm1.canvas,
     antialias: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
 
   // Scene
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x808080);
+  cm1.scene.background = new THREE.Color(cm2.backgroundColor);
 
   // Camera
   const camera = new THREE.PerspectiveCamera(
@@ -26,43 +31,81 @@ export default function scene(modelsArr) {
   );
   camera.position.y = 1.5;
   camera.position.z = 4;
-  scene.add(camera);
+  cm1.scene.add(camera);
 
   // Light
-  const ambientLight = new THREE.AmbientLight("white", 0.5);
-  scene.add(ambientLight);
+  const ambientLight = new THREE.AmbientLight(cm2.lightColor, 0.5);
+  cm1.scene.add(ambientLight);
 
-  const directionalLight = new THREE.DirectionalLight("white", 1);
+  const directionalLight = new THREE.DirectionalLight(cm2.lightColor, 1);
   directionalLight.position.x = 1;
   directionalLight.position.z = 2;
-  scene.add(directionalLight);
+  directionalLight.castShadow = true;
+  cm1.scene.add(directionalLight);
+
+  // Floor
+  const floor = new Floor({
+    name: "floor",
+    rotationX: degToRad(-90),
+  });
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);
 
-  const changeTextButton = document.getElementById("add-button");
-  let index = 10;
-  changeTextButton.addEventListener("click", () => {
-    if (modelsArr.length > 0) {
-      const model = modelsArr[index].clone();
-      model.position.x = Math.random() * 5 - 2.5;
-      model.position.y = Math.random() * 5 - 2.5;
-      scene.add(model);
-      console.log(index);
-      index += 1;
-    }
+  const cannonWorld = new CANNON.World();
+  //gravity(earth)
+  cannonWorld.gravity.set(0, -9.8, 0);
+
+  cannonWorld.defaultContactMaterial = defaultContactMaterial;
+
+  const floorShape = new CANNON.Plane();
+  const floorBody = new CANNON.Body({
+    mass: 0,
+    position: new CANNON.Vec3(0, 0, 0),
+    shape: floorShape,
+    material: defaultMaterial,
   });
 
-  console.log(modelsArr);
+  floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI / 2);
+  cannonWorld.addBody(floorBody);
 
-  const addRandomModelToScene = () => {
-    if (modelsArr.length > 0) {
-      const randomIndex = Math.floor(Math.random() * modelsArr.length);
-      const randomModel = modelsArr[randomIndex].clone(); // Clone the model to avoid modifying the original
-      console.log(randomModel);
-      scene.add(randomModel);
+  // // trash pile scene
+  // const gltfLoader = new GLTFLoader();
+
+  // gltfLoader.load("./models/composter.glb", (gltf) => {
+  //   const composter = gltf.scene.children[0];
+  //   composter.scale.set(1, 1, 1);
+  //   composter.rotation.y += degToRad(90);
+
+  //   cm1.scene.add(composter);
+  // });
+
+  const changeTextButton = document.getElementById("add-button");
+
+  changeTextButton.addEventListener("click", () => {
+    if (garbageMeshes.length > 0) {
+      garbageMeshes.forEach((mesh) => {
+        const cloneMesh = mesh.clone();
+        cloneMesh.position.set(Math.random() * 5 - 2.5, 10, 0); // Random position at the top
+
+        const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Simplified shape for all meshes
+        const body = new CANNON.Body({
+          mass: 1,
+          position: new CANNON.Vec3(
+            cloneMesh.position.x,
+            cloneMesh.position.y,
+            cloneMesh.position.z
+          ),
+          shape: shape,
+          material: defaultMaterial,
+        });
+
+        cannonWorld.addBody(body);
+        cloneMesh.userData.physicsBody = body;
+        cm1.scene.add(cloneMesh);
+      });
     }
-  };
+  });
 
   // Draw function
   const clock = new THREE.Clock();
@@ -70,7 +113,18 @@ export default function scene(modelsArr) {
   function draw() {
     const delta = clock.getDelta();
 
-    renderer.render(scene, camera);
+    cannonWorld.step(1 / 60, delta, 3);
+
+    // Update Three.js model positions based on physics
+    cm1.scene.traverse((object) => {
+      if (object.userData.physicsBody) {
+        const body = object.userData.physicsBody;
+        object.position.copy(body.position);
+        object.quaternion.copy(body.quaternion);
+      }
+    });
+
+    renderer.render(cm1.scene, camera);
     renderer.setAnimationLoop(draw);
   }
 
@@ -78,7 +132,7 @@ export default function scene(modelsArr) {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.render(scene, camera);
+    renderer.render(cm1.scene, camera);
   }
 
   // Event listener
