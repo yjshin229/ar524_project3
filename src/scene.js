@@ -1,10 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { degToRad } from "three/src/math/MathUtils";
 import * as CANNON from "cannon-es";
 import { defaultContactMaterial, defaultMaterial } from "./cannon";
-import { createSimpleShape } from "./convexHull";
 import { cm1, cm2 } from "./common";
 import { Floor } from "./floor";
 
@@ -30,7 +28,7 @@ export default function scene(garbageMeshes) {
     1000
   );
   camera.position.y = 1.5;
-  camera.position.z = 4;
+  camera.position.z = 7;
   cm1.scene.add(camera);
 
   // Light
@@ -69,24 +67,17 @@ export default function scene(garbageMeshes) {
   floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI / 2);
   cannonWorld.addBody(floorBody);
 
-  // // trash pile scene
-  // const gltfLoader = new GLTFLoader();
-
-  // gltfLoader.load("./models/composter.glb", (gltf) => {
-  //   const composter = gltf.scene.children[0];
-  //   composter.scale.set(1, 1, 1);
-  //   composter.rotation.y += degToRad(90);
-
-  //   cm1.scene.add(composter);
-  // });
-
   const changeTextButton = document.getElementById("add-button");
 
   changeTextButton.addEventListener("click", () => {
     if (garbageMeshes.length > 0) {
       garbageMeshes.forEach((mesh) => {
         const cloneMesh = mesh.clone();
-        cloneMesh.position.set(Math.random() * 5 - 2.5, 10, 0); // Random position at the top
+        cloneMesh.position.set(
+          Math.random() * 20 - 10,
+          10,
+          Math.random() * 20 - 10
+        ); // Random position at the top
 
         const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Simplified shape for all meshes
         const body = new CANNON.Body({
