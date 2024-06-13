@@ -27,10 +27,11 @@ export const cm1 = {
 export const cm2 = {
   backgroundColor: "#808080",
   lightColor: "#ffffff",
+  woodColor: "#4f3c30",
 };
 
 export const geometry = {
-  floor: new PlaneGeometry(20, 20),
+  floor: new PlaneGeometry(100, 100),
 };
 
 export const material = {

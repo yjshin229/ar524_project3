@@ -28,7 +28,7 @@ export default function scene(garbageMeshes) {
     1000
   );
   camera.position.y = 1.5;
-  camera.position.z = 7;
+  camera.position.z = 15;
   cm1.scene.add(camera);
 
   // Light
@@ -45,6 +45,27 @@ export default function scene(garbageMeshes) {
   const floor = new Floor({
     name: "floor",
     rotationX: degToRad(-90),
+  });
+
+  const wall1 = new Floor({
+    name: "wall1",
+    x: 0,
+    y: 50,
+    z: -50,
+  });
+  const wall2 = new Floor({
+    name: "wall2",
+    rotationY: degToRad(-90),
+    x: 50,
+    y: 50,
+    z: 0,
+  });
+  const wall3 = new Floor({
+    name: "wall3",
+    rotationY: degToRad(90),
+    x: -50,
+    y: 50,
+    z: 0,
   });
 
   // Controls
@@ -64,6 +85,32 @@ export default function scene(garbageMeshes) {
     material: defaultMaterial,
   });
 
+  const wallBody1 = new CANNON.Body({
+    mass: 0,
+    position: new CANNON.Vec3(50, 50, 0),
+    shape: floorShape,
+    rotationX: degToRad(-90),
+    material: defaultMaterial,
+  });
+
+  const wallBody2 = new CANNON.Body({
+    mass: 0,
+    position: new CANNON.Vec3(-50, 50, 0),
+    rotationY: degToRad(-90),
+    rotationX: degToRad(-90),
+    shape: floorShape,
+    material: defaultMaterial,
+  });
+
+  const wallBody3 = new CANNON.Body({
+    mass: 0,
+    position: new CANNON.Vec3(0, 0, 0),
+    shape: floorShape,
+    rotationY: degToRad(90),
+    rotationX: degToRad(-90),
+    material: defaultMaterial,
+  });
+
   floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI / 2);
   cannonWorld.addBody(floorBody);
 
@@ -75,7 +122,7 @@ export default function scene(garbageMeshes) {
         const cloneMesh = mesh.clone();
         cloneMesh.position.set(
           Math.random() * 20 - 10,
-          10,
+          20,
           Math.random() * 20 - 10
         ); // Random position at the top
 

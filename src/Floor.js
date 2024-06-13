@@ -12,6 +12,8 @@ export class Floor extends Stuff {
     this.mesh = new Mesh(this.geometry, this.material);
     this.mesh.position.set(this.x, this.y, this.z);
     this.mesh.rotateX(this.rotationX);
+    this.mesh.rotateY(this.rotationY);
+    this.mesh.rotateZ(this.rotationZ);
     this.mesh.receiveShadow = true;
 
     cm1.scene.add(this.mesh);

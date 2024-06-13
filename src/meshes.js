@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { cm2 } from "./common";
 
 // Texture Loader
 const textureLoader = new THREE.TextureLoader();
@@ -13,6 +14,10 @@ const dirtyPlasticTexture = textureLoader.load(
 );
 const tireTexture = textureLoader.load("./textures/Tire_rubber_color.jpg");
 const waffleTexture = textureLoader.load("./textures/Waffle_001_basecolor.jpg");
+const woodTexture = textureLoader.load("./textures/WoodPlanksWorn001_COL.jpg");
+const pumpkinTexture = textureLoader.load(
+  "./textures/Pumpkin_001_basecolor.jpg"
+);
 
 // Function to create garbage mesh templates
 const createGarbageMeshTemplates = () => {
@@ -101,6 +106,7 @@ const createGarbageMeshTemplates = () => {
   };
   garbageTemplates.push(createTire());
 
+  //waffle
   const createWaffle = () => {
     const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 32);
     const material = new THREE.MeshBasicMaterial({ map: waffleTexture });
@@ -109,6 +115,30 @@ const createGarbageMeshTemplates = () => {
   };
 
   garbageTemplates.push(createWaffle());
+
+  const createPumpkin = () => {
+    const geometry = new THREE.SphereGeometry(0.2, 32, 32);
+    const material = new THREE.MeshStandardMaterial({
+      map: pumpkinTexture,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.scale.y = 0.8;
+    return mesh;
+  };
+
+  garbageTemplates.push(createPumpkin());
+
+  const createWoodPlank = () => {
+    const geometry = new THREE.BoxGeometry(0.1, 0.8, 0.05);
+    const material = new THREE.MeshBasicMaterial({
+      map: woodTexture,
+      color: cm2.woodColor,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    return mesh;
+  };
+
+  garbageTemplates.push(createWoodPlank());
 
   return garbageTemplates;
 };

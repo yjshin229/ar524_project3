@@ -8,5 +8,6 @@ export class Stuff {
 
     this.rotationX = info.rotationX || 0;
     this.rotationY = info.rotationY || 0;
+    this.rotationZ = info.rotationZ || 0;
   }
 }
