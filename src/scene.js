@@ -12,6 +12,7 @@ import {
 } from "./cannon";
 import { cm1, cm2 } from "./common";
 import { Floor } from "./floor";
+import countCarousel from "./countCarousel";
 
 export default function scene(garbageMeshes) {
   // Renderer
@@ -134,8 +135,8 @@ export default function scene(garbageMeshes) {
     const planeWidth = 20;
     const halfPlaneWidth = planeWidth / 2;
     const randomX = Math.random() * planeWidth - halfPlaneWidth;
-    const randomY = Math.random() * 10 + 15; // Random y position between 15 and 25
-
+    const randomY = Math.random() * 10 + 10;
+    const randomZ = Math.random() * 20 - Math.random() * 10;
     cloneMesh.position.set(randomX, randomY, 0);
 
     const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Simplified shape for all meshes
@@ -147,13 +148,8 @@ export default function scene(garbageMeshes) {
         cloneMesh.position.z
       ),
       shape: shape,
-      material: cloneMesh.userData.material, // Use the assigned material
+      material: cloneMesh.userData.material,
     });
-
-    body.velocity.setZero(); // Ensure no initial velocity
-    body.angularVelocity.setZero(); // Ensure no initial angular velocity
-    body.force.setZero(); // Ensure no initial force
-    body.torque.setZero(); // Ensure no initial torque
 
     cannonWorld.addBody(body);
     cloneMesh.userData.physicsBody = body;
@@ -189,12 +185,16 @@ export default function scene(garbageMeshes) {
     }, delay);
   };
 
+  let previousMax = 669319000;
+  const $counter = document.getElementById("count");
+
   const header = () => {
     let currentYear = 2012; // Initial year
 
     // Set initial text
     floatingText.textContent = currentYear;
-    addGarbageWithDelay(500, 20, 100);
+    countCarousel($counter, 0, 669319000);
+    addGarbageWithDelay(400, 20, 100);
 
     changeTextButton.addEventListener("click", () => {
       if (currentYear < 2020) {
@@ -203,28 +203,44 @@ export default function scene(garbageMeshes) {
         switch (currentYear) {
           case 2013:
             addGarbageWithDelay(30, 20, 100);
+            countCarousel($counter, previousMax, 669895700);
+            previousMax = 669895700;
             break;
           case 2014:
-            addGarbageWithDelay(100, 20, 100);
+            addGarbageWithDelay(70, 20, 100);
+            countCarousel($counter, previousMax, 674718400);
+            previousMax = 674718400;
             break;
           case 2015:
-            addGarbageWithDelay(400, 20, 100);
+            addGarbageWithDelay(300, 20, 100);
+            countCarousel($counter, previousMax, 682495300);
+            previousMax = 682495300;
             break;
           case 2016:
-            addGarbageWithDelay(600, 20, 100);
+            addGarbageWithDelay(400, 20, 100);
+            countCarousel($counter, previousMax, 697436400);
+            previousMax = 697436400;
             break;
           case 2017:
-            addGarbageWithDelay(100, 20, 100);
+            addGarbageWithDelay(50, 20, 100);
+            countCarousel($counter, previousMax, 700348300);
+            previousMax = 700348300;
             break;
           case 2018:
-            addGarbageWithDelay(100, 20, 100);
+            addGarbageWithDelay(80, 20, 100);
+            countCarousel($counter, previousMax, 726167100);
+            previousMax = 726167100;
             break;
           case 2019:
-            addGarbageWithDelay(150, 20, 100);
+            addGarbageWithDelay(100, 20, 100);
+            countCarousel($counter, previousMax, 730742100);
+            previousMax = 730742100;
             break;
           case 2020:
             changeTextButton.style.visibility = "hidden";
             addGarbageWithDelay(80, 20, 100);
+            countCarousel($counter, previousMax, 732105500);
+            previousMax = 732105500;
             break;
         }
       }
