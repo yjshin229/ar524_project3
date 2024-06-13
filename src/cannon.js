@@ -2,9 +2,9 @@ import * as CANNON from "cannon-es";
 
 export const defaultMaterial = new CANNON.Material("default");
 export const rubberMaterial = new CANNON.Material("rubber");
-export const ironMaterial = new CANNON.Material("iron");
+export const metalMaterial = new CANNON.Material("metal");
 export const plasticMaterial = new CANNON.Material("plastic");
-export const cottonMaterial = new CANNON.Material("cotton");
+export const paperMaterial = new CANNON.Material("paper");
 
 export const defaultContactMaterial = new CANNON.ContactMaterial(
   defaultMaterial,
@@ -17,9 +17,9 @@ export const rubberContactMaterial = new CANNON.ContactMaterial(
   { friction: 0.2, restitution: 0.8 }
 );
 
-export const ironContactMaterial = new CANNON.ContactMaterial(
-  ironMaterial,
-  ironMaterial,
+export const metalContactMaterial = new CANNON.ContactMaterial(
+  metalMaterial,
+  metalMaterial,
   { friction: 0.7, restitution: 0 }
 );
 
@@ -29,9 +29,9 @@ export const plasticContactMaterial = new CANNON.ContactMaterial(
   { friction: 0.5, restitution: 0.1 }
 );
 
-export const cottonContactMaterial = new CANNON.ContactMaterial(
-  cottonMaterial,
-  cottonMaterial,
+export const paperContactMaterial = new CANNON.ContactMaterial(
+  paperMaterial,
+  paperMaterial,
   { friction: 1, restitution: 0 }
 );
 
@@ -44,8 +44,8 @@ export const rubberDefaultContactMaterial = new CANNON.ContactMaterial(
   }
 );
 
-export const ironDefaultContactMaterial = new CANNON.ContactMaterial(
-  ironMaterial,
+export const metalDefaultContactMaterial = new CANNON.ContactMaterial(
+  metalMaterial,
   defaultMaterial,
   {
     friction: 0.5,
@@ -62,8 +62,8 @@ export const plasticDefaultContactMaterial = new CANNON.ContactMaterial(
   }
 );
 
-export const cottonDefaultContactMaterial = new CANNON.ContactMaterial(
-  cottonMaterial,
+export const paperDefaultContactMaterial = new CANNON.ContactMaterial(
+  paperMaterial,
   defaultMaterial,
   {
     friction: 0, //?
@@ -71,9 +71,9 @@ export const cottonDefaultContactMaterial = new CANNON.ContactMaterial(
   }
 );
 
-export const rubberIronContactMaterial = new CANNON.ContactMaterial(
+export const rubberMetalContactMaterial = new CANNON.ContactMaterial(
   rubberMaterial,
-  ironMaterial,
+  metalMaterial,
   {
     friction: 0.5,
     restitution: 0.3,
@@ -89,17 +89,17 @@ export const rubberPlasticContactMaterial = new CANNON.ContactMaterial(
   }
 );
 
-export const rubberCottonContactMaterial = new CANNON.ContactMaterial(
+export const rubberPaperContactMaterial = new CANNON.ContactMaterial(
   rubberMaterial,
-  cottonMaterial,
+  paperMaterial,
   {
     friction: 0.5,
     restitution: 0,
   }
 );
 
-export const ironPlasticContactMaterial = new CANNON.ContactMaterial(
-  ironMaterial,
+export const metalPlasticContactMaterial = new CANNON.ContactMaterial(
+  metalMaterial,
   plasticMaterial,
   {
     friction: 0.5,
@@ -107,17 +107,17 @@ export const ironPlasticContactMaterial = new CANNON.ContactMaterial(
   }
 );
 
-export const ironCottonContactMaterial = new CANNON.ContactMaterial(
-  ironMaterial,
-  cottonMaterial,
+export const metalPaperContactMaterial = new CANNON.ContactMaterial(
+  metalMaterial,
+  paperMaterial,
   {
     friction: 0.5,
     restitution: 0,
   }
 );
 
-export const cottonPlasticContactMaterial = new CANNON.ContactMaterial(
-  cottonMaterial,
+export const paperPlasticContactMaterial = new CANNON.ContactMaterial(
+  paperMaterial,
   plasticMaterial,
   {
     friction: 0.5,

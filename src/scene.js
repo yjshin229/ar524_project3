@@ -2,7 +2,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { degToRad } from "three/src/math/MathUtils";
 import * as CANNON from "cannon-es";
-import { defaultContactMaterial, defaultMaterial } from "./cannon";
+import {
+  defaultContactMaterial,
+  defaultMaterial,
+  metalDefaultContactMaterial,
+  paperDefaultContactMaterial,
+  plasticDefaultContactMaterial,
+  rubberDefaultContactMaterial,
+} from "./cannon";
 import { cm1, cm2 } from "./common";
 import { Floor } from "./floor";
 
@@ -27,8 +34,8 @@ export default function scene(garbageMeshes) {
     0.1,
     1000
   );
-  camera.position.y = 1.5;
-  camera.position.z = 15;
+  camera.position.y = 2;
+  camera.position.z = 10;
   cm1.scene.add(camera);
 
   // Light
@@ -50,21 +57,21 @@ export default function scene(garbageMeshes) {
   const wall1 = new Floor({
     name: "wall1",
     x: 0,
-    y: 50,
-    z: -50,
+    y: 25,
+    z: -25,
   });
   const wall2 = new Floor({
     name: "wall2",
     rotationY: degToRad(-90),
-    x: 50,
-    y: 50,
+    x: 25,
+    y: 25,
     z: 0,
   });
   const wall3 = new Floor({
     name: "wall3",
     rotationY: degToRad(90),
-    x: -50,
-    y: 50,
+    x: -25,
+    y: 25,
     z: 0,
   });
 
@@ -77,6 +84,11 @@ export default function scene(garbageMeshes) {
 
   cannonWorld.defaultContactMaterial = defaultContactMaterial;
 
+  cannonWorld.addContactMaterial(rubberDefaultContactMaterial);
+  cannonWorld.addContactMaterial(metalDefaultContactMaterial);
+  cannonWorld.addContactMaterial(plasticDefaultContactMaterial);
+  cannonWorld.addContactMaterial(paperDefaultContactMaterial);
+
   const floorShape = new CANNON.Plane();
   const floorBody = new CANNON.Body({
     mass: 0,
@@ -84,66 +96,142 @@ export default function scene(garbageMeshes) {
     shape: floorShape,
     material: defaultMaterial,
   });
+  floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0); // Make the plane horizontal
+  cannonWorld.addBody(floorBody);
 
   const wallBody1 = new CANNON.Body({
     mass: 0,
-    position: new CANNON.Vec3(50, 50, 0),
+    position: new CANNON.Vec3(0, 25, -25),
     shape: floorShape,
-    rotationX: degToRad(-90),
     material: defaultMaterial,
   });
+  wallBody1.quaternion.setFromEuler(Math.PI / 2, 0, 0); // Vertical wall
+  cannonWorld.addBody(wallBody1);
 
   const wallBody2 = new CANNON.Body({
     mass: 0,
-    position: new CANNON.Vec3(-50, 50, 0),
-    rotationY: degToRad(-90),
-    rotationX: degToRad(-90),
+    position: new CANNON.Vec3(25, 25, 0),
     shape: floorShape,
     material: defaultMaterial,
   });
+  wallBody2.quaternion.setFromEuler(0, -Math.PI / 2, 0); // Vertical wall rotated 90 degrees around y-axis
+  cannonWorld.addBody(wallBody2);
 
   const wallBody3 = new CANNON.Body({
     mass: 0,
-    position: new CANNON.Vec3(0, 0, 0),
+    position: new CANNON.Vec3(-25, 25, 0),
     shape: floorShape,
-    rotationY: degToRad(90),
-    rotationX: degToRad(-90),
     material: defaultMaterial,
   });
+  wallBody3.quaternion.setFromEuler(0, Math.PI / 2, 0); // Vertical wall rotated -90 degrees around y-axis
+  cannonWorld.addBody(wallBody3);
 
-  floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI / 2);
-  cannonWorld.addBody(floorBody);
+  const floatingText = document.getElementById("floating-text");
+  const changeTextButton = document.getElementById("change-text-button");
 
-  const changeTextButton = document.getElementById("add-button");
+  const addGarbageMesh = (mesh) => {
+    const cloneMesh = mesh.clone();
+    const planeWidth = 20;
+    const halfPlaneWidth = planeWidth / 2;
+    const randomX = Math.random() * planeWidth - halfPlaneWidth;
+    const randomY = Math.random() * 10 + 15; // Random y position between 15 and 25
 
-  changeTextButton.addEventListener("click", () => {
-    if (garbageMeshes.length > 0) {
-      garbageMeshes.forEach((mesh) => {
-        const cloneMesh = mesh.clone();
-        cloneMesh.position.set(
-          Math.random() * 20 - 10,
-          20,
-          Math.random() * 20 - 10
-        ); // Random position at the top
+    cloneMesh.position.set(randomX, randomY, 0);
 
-        const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Simplified shape for all meshes
-        const body = new CANNON.Body({
-          mass: 1,
-          position: new CANNON.Vec3(
-            cloneMesh.position.x,
-            cloneMesh.position.y,
-            cloneMesh.position.z
-          ),
-          shape: shape,
-          material: defaultMaterial,
-        });
+    const shape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)); // Simplified shape for all meshes
+    const body = new CANNON.Body({
+      mass: cloneMesh.userData.mass,
+      position: new CANNON.Vec3(
+        cloneMesh.position.x,
+        cloneMesh.position.y,
+        cloneMesh.position.z
+      ),
+      shape: shape,
+      material: cloneMesh.userData.material, // Use the assigned material
+    });
 
-        cannonWorld.addBody(body);
-        cloneMesh.userData.physicsBody = body;
-        cm1.scene.add(cloneMesh);
-      });
-    }
-  });
+    body.velocity.setZero(); // Ensure no initial velocity
+    body.angularVelocity.setZero(); // Ensure no initial angular velocity
+    body.force.setZero(); // Ensure no initial force
+    body.torque.setZero(); // Ensure no initial torque
+
+    cannonWorld.addBody(body);
+    cloneMesh.userData.physicsBody = body;
+    cm1.scene.add(cloneMesh);
+  };
+
+  const addGarbageWithDelay = (totalCount, batchCount, delay) => {
+    changeTextButton.disabled = true;
+    changeTextButton.style.backgroundColor = "#808080";
+    changeTextButton.style.cursor = "not-allowed";
+
+    let addedCount = 0;
+    const intervalId = setInterval(() => {
+      if (addedCount >= totalCount) {
+        clearInterval(intervalId);
+        if (floatingText.textContent !== 2020) {
+          changeTextButton.disabled = false;
+          changeTextButton.style.backgroundColor = "#793602";
+          changeTextButton.style.cursor = "pointer";
+        }
+
+        return;
+      }
+
+      for (let i = 0; i < batchCount; i++) {
+        if (addedCount >= totalCount) {
+          break;
+        }
+        const templateIndex = Math.floor(Math.random() * garbageMeshes.length);
+        addGarbageMesh(garbageMeshes[templateIndex]);
+        addedCount += 1;
+      }
+    }, delay);
+  };
+
+  const header = () => {
+    let currentYear = 2012; // Initial year
+
+    // Set initial text
+    floatingText.textContent = currentYear;
+    addGarbageWithDelay(500, 20, 100);
+
+    changeTextButton.addEventListener("click", () => {
+      if (currentYear < 2020) {
+        currentYear += 1;
+        floatingText.textContent = currentYear;
+        switch (currentYear) {
+          case 2013:
+            addGarbageWithDelay(30, 20, 100);
+            break;
+          case 2014:
+            addGarbageWithDelay(100, 20, 100);
+            break;
+          case 2015:
+            addGarbageWithDelay(400, 20, 100);
+            break;
+          case 2016:
+            addGarbageWithDelay(600, 20, 100);
+            break;
+          case 2017:
+            addGarbageWithDelay(100, 20, 100);
+            break;
+          case 2018:
+            addGarbageWithDelay(100, 20, 100);
+            break;
+          case 2019:
+            addGarbageWithDelay(150, 20, 100);
+            break;
+          case 2020:
+            changeTextButton.style.visibility = "hidden";
+            addGarbageWithDelay(80, 20, 100);
+            break;
+        }
+      }
+    });
+  };
+
+  header();
 
   // Draw function
   const clock = new THREE.Clock();

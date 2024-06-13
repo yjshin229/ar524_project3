@@ -1,5 +1,5 @@
 const header = () => {
-  let currentYear = 2010; // Initial year
+  let currentYear = 2012; // Initial year
 
   const floatingText = document.getElementById("floating-text");
   const changeTextButton = document.getElementById("change-text-button");

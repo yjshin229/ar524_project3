@@ -1,5 +1,12 @@
 import * as THREE from "three";
 import { cm2 } from "./common";
+import {
+  defaultMaterial,
+  metalMaterial,
+  paperMaterial,
+  plasticMaterial,
+  rubberMaterial,
+} from "./cannon";
 
 // Texture Loader
 const textureLoader = new THREE.TextureLoader();
@@ -34,6 +41,11 @@ const createGarbageMeshTemplates = () => {
     mesh.scale.y = Math.random() * 0.5 + 0.1;
     mesh.rotation.x = Math.random() * Math.PI;
     mesh.rotation.z = Math.random() * Math.PI;
+
+    mesh.userData = {
+      material: metalMaterial,
+      mass: 0.5,
+    };
     return mesh;
   };
   garbageTemplates.push(createCrushedCan());
@@ -55,6 +67,12 @@ const createGarbageMeshTemplates = () => {
     const brokenMesh = new THREE.Mesh(brokenPart, brokenMaterial);
     brokenMesh.position.set(0, 0.3, 0);
     mesh.add(brokenMesh);
+
+    mesh.userData = {
+      material: plasticMaterial,
+      mass: 0.5,
+    };
+
     return mesh;
   };
   garbageTemplates.push(createBrokenBottle());
@@ -77,6 +95,12 @@ const createGarbageMeshTemplates = () => {
     geometry.computeVertexNormals();
 
     const mesh = new THREE.Mesh(geometry, material);
+
+    mesh.userData = {
+      material: paperMaterial,
+      mass: 0.3,
+    };
+
     return mesh;
   };
   garbageTemplates.push(createCrumpledBox());
@@ -90,6 +114,12 @@ const createGarbageMeshTemplates = () => {
     });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.scale.y = Math.random() * 0.5 + 0.5;
+
+    mesh.userData = {
+      material: metalMaterial,
+      mass: 1,
+    };
+
     return mesh;
   };
   garbageTemplates.push(createTrashBag());
@@ -102,6 +132,12 @@ const createGarbageMeshTemplates = () => {
       color: "#2b2b2b",
     });
     const mesh = new THREE.Mesh(geometry, material);
+
+    mesh.userData = {
+      material: rubberMaterial,
+      mass: 2,
+    };
+
     return mesh;
   };
   garbageTemplates.push(createTire());
@@ -111,6 +147,12 @@ const createGarbageMeshTemplates = () => {
     const geometry = new THREE.CylinderGeometry(0.2, 0.2, 0.05, 32);
     const material = new THREE.MeshBasicMaterial({ map: waffleTexture });
     const mesh = new THREE.Mesh(geometry, material);
+
+    mesh.userData = {
+      material: paperMaterial,
+      mass: 0.2,
+    };
+
     return mesh;
   };
 
@@ -123,6 +165,12 @@ const createGarbageMeshTemplates = () => {
     });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.scale.y = 0.8;
+
+    mesh.userData = {
+      material: defaultMaterial,
+      mass: 1,
+    };
+
     return mesh;
   };
 
@@ -135,6 +183,11 @@ const createGarbageMeshTemplates = () => {
       color: cm2.woodColor,
     });
     const mesh = new THREE.Mesh(geometry, material);
+
+    mesh.userData = {
+      material: plasticMaterial,
+      mass: 0.5,
+    };
     return mesh;
   };
 

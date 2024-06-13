@@ -31,7 +31,7 @@ export const cm2 = {
 };
 
 export const geometry = {
-  floor: new PlaneGeometry(100, 100),
+  floor: new PlaneGeometry(50, 50),
 };
 
 export const material = {
