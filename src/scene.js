@@ -32,11 +32,12 @@ export default function scene(garbageMeshes) {
   const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
-    0.1,
+    0.2,
     1000
   );
-  camera.position.y = 2;
+  camera.position.y = 3;
   camera.position.z = 10;
+  camera.lookAt(0, 0, 0);
   cm1.scene.add(camera);
 
   // Light
@@ -48,6 +49,9 @@ export default function scene(garbageMeshes) {
   directionalLight.position.z = 2;
   directionalLight.castShadow = true;
   cm1.scene.add(directionalLight);
+
+  // Controls
+  // const controls = new OrbitControls(camera, renderer.domElement);
 
   // Floor
   const floor = new Floor({
@@ -76,9 +80,6 @@ export default function scene(garbageMeshes) {
     z: 0,
   });
 
-  // Controls
-  const controls = new OrbitControls(camera, renderer.domElement);
-
   const cannonWorld = new CANNON.World();
   //gravity(earth)
   cannonWorld.gravity.set(0, -9.8, 0);
@@ -106,7 +107,7 @@ export default function scene(garbageMeshes) {
     shape: floorShape,
     material: defaultMaterial,
   });
-  wallBody1.quaternion.setFromEuler(Math.PI / 2, 0, 0); // Vertical wall
+  wallBody1.quaternion.setFromEuler(0, 0, Math.PI / 2); // Vertical wall
   cannonWorld.addBody(wallBody1);
 
   const wallBody2 = new CANNON.Body({

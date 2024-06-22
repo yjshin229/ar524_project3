@@ -59,22 +59,45 @@ body {
   background-color: #b75103;
 }
 
-.add-button {
+#title-page {
+  background-color: #404040;
   z-index: 10;
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #021079;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  pointer-events: auto;
+  width: 100vw;
+  height: 100vh;
+  position: fixed; /* Make sure it's fixed to cover the entire viewport */
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
-.add-button:hover {
-  background-color: #0366b7;
+.title {
+  font-size: 50px;
+  color: white;
+  text-align: center;
+}
+
+.enter-world {
+  font-size: 24px;
+  color: white;
+  margin-top: 12px;
+}
+
+.enter-world:hover {
+  position: relative;
+  top: 12px;
+  font-size: 26px;
+  color: white;
+  cursor: pointer;
+}
+
+.explanation {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
 }
